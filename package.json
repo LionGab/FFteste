@@ -1,0 +1,23 @@
+{
+  "name": "fullforce-academia-website",
+  "version": "1.0.0",
+  "description": "Website oficial da FullForce Academia - Transforme seu corpo, fortaleça sua mente",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server fullforce-site -p 8080 -o",
+    "dev": "npx live-server fullforce-site --port=8080"
+  },
+  "keywords": [
+    "academia",
+    "fitness",
+    "gym",
+    "fullforce",
+    "musculação",
+    "crossfit",
+    "funcional"
+  ],
+  "author": "FullForce Academia",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
