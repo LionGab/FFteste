@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Entre em contato com a FullForce Academia">
+    <title>Contato - FullForce Academia</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>FullForce<span>Academia</span></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Início</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="services.html">Serviços</a></li>
+                    <li><a href="schedule.html">Horários</a></li>
+                    <li><a href="contact.html" class="active">Contato</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Entre em Contato</h1>
+            <p>Estamos prontos para atendê-lo</p>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="content-section">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+                <!-- Contact Form -->
+                <div>
+                    <h2 class="section-title" style="text-align: left;">Envie uma Mensagem</h2>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nome Completo *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Telefone *</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="(11) 1234-5678">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Assunto *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Selecione um assunto</option>
+                                <option value="matricula">Nova Matrícula</option>
+                                <option value="informacoes">Informações sobre Planos</option>
+                                <option value="aula-experimental">Aula Experimental</option>
+                                <option value="personal">Personal Training</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Mensagem *</label>
+                            <textarea id="message" name="message" required placeholder="Conte-nos como podemos ajudá-lo..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Mensagem</button>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h2 class="section-title" style="text-align: left;">Informações de Contato</h2>
+                    
+                    <div style="background-color: var(--light-bg); padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📍 Endereço</h3>
+                        <p><strong>FullForce Academia</strong></p>
+                        <p>Rua Exemplo, 123</p>
+                        <p>Bairro Centro - São Paulo, SP</p>
+                        <p>CEP: 01234-567</p>
+                    </div>
+
+                    <div style="background-color: var(--light-bg); padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📞 Telefone</h3>
+                        <p><strong>(11) 1234-5678</strong></p>
+                        <p>WhatsApp: (11) 98765-4321</p>
+                        <p>Ligações e mensagens</p>
+                    </div>
+
+                    <div style="background-color: var(--light-bg); padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">📧 E-mail</h3>
+                        <p><strong>contato@fullforceacademia.com.br</strong></p>
+                        <p>Respondemos em até 24 horas</p>
+                    </div>
+
+                    <div style="background-color: var(--light-bg); padding: 2rem; border-radius: 10px;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🕐 Horários</h3>
+                        <p><strong>Segunda a Sexta:</strong> 6h às 22h</p>
+                        <p><strong>Sábado:</strong> 8h às 14h</p>
+                        <p><strong>Domingo:</strong> Fechado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section style="padding: 0; margin: 3rem 0;">
+        <div style="background-color: var(--light-bg); padding: 4rem 0; text-align: center;">
+            <div class="container">
+                <h2 class="section-title">Como Chegar</h2>
+                <p style="margin-bottom: 2rem;">Estamos localizados no coração de São Paulo, com fácil acesso por transporte público e estacionamento disponível.</p>
+                <div style="background-color: #ddd; height: 400px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #666;">
+                    <div>
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">🗺️</p>
+                        <p><strong>Mapa interativo em breve</strong></p>
+                        <p>Use o endereço acima para encontrar-nos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">Perguntas Frequentes</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="background-color: var(--light-bg); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Posso fazer uma aula experimental?</h3>
+                    <p>Sim! Oferecemos aula experimental gratuita para novos alunos. Entre em contato para agendar.</p>
+                </div>
+
+                <div style="background-color: var(--light-bg); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Quais são as formas de pagamento?</h3>
+                    <p>Aceitamos cartão de crédito, débito, PIX e boleto bancário. Temos planos mensais, trimestrais, semestrais e anuais.</p>
+                </div>
+
+                <div style="background-color: var(--light-bg); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">É necessário agendamento?</h3>
+                    <p>Para aulas em grupo, sim. Para musculação livre, não é necessário agendamento.</p>
+                </div>
+
+                <div style="background-color: var(--light-bg); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Tem estacionamento?</h3>
+                    <p>Sim, oferecemos estacionamento gratuito para nossos alunos.</p>
+                </div>
+
+                <div style="background-color: var(--light-bg); padding: 1.5rem; border-radius: 10px;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;">Preciso levar algo para treinar?</h3>
+                    <p>Recomendamos trazer roupa confortável, tênis adequado, toalha e garrafa de água.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Visite Nossa Academia!</h2>
+            <p>Conheça nossa estrutura e faça uma aula experimental gratuita</p>
+            <a href="tel:1112345678" class="btn btn-large">Ligar Agora</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>FullForce Academia</h3>
+                    <p>Transformando vidas através do fitness</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="../index.html">Início</a></li>
+                        <li><a href="about.html">Sobre</a></li>
+                        <li><a href="services.html">Serviços</a></li>
+                        <li><a href="contact.html">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>📞 (11) 1234-5678</p>
+                    <p>📧 contato@fullforceacademia.com.br</p>
+                    <p>📍 Rua Exemplo, 123 - São Paulo, SP</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Horários</h4>
+                    <p>Segunda a Sexta: 6h às 22h</p>
+                    <p>Sábado: 8h às 14h</p>
+                    <p>Domingo: Fechado</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FullForce Academia. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
