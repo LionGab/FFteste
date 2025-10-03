@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Aprovação - FullForce Academia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .leads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .lead-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .lead-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .lead-card.selected {
+            border: 3px solid #667eea;
+        }
+
+        .lead-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .lead-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .lead-phone {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+
+        .priority-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .priority-MUITO_ALTA {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .priority-ALTA {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+
+        .priority-MEDIA {
+            background: #fde68a;
+            color: #92400e;
+        }
+
+        .priority-BAIXA {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .score {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .message-preview {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .lead-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .lead-actions button {
+            flex: 1;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .loader {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .template-badge {
+            display: inline-block;
+            background: #e5e7eb;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .leads-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Dashboard de Aprovação - Reativação Diária</h1>
+            <p>Revise e aprove os leads selecionados para contato hoje</p>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="stat-total">0</h3>
+                    <p>Total de Leads</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-selected">0</h3>
+                    <p>Selecionados</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-score">0</h3>
+                    <p>Score Médio</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-expected">R$ 0</h3>
+                    <p>Receita Esperada</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="carregarLote()">🔄 Carregar Lote Diário</button>
+            <button class="btn btn-success" onclick="aprovarSelecionados()">✅ Aprovar Selecionados</button>
+            <button class="btn btn-warning" onclick="selecionarTodos()">☑️ Selecionar Todos</button>
+            <button class="btn btn-danger" onclick="limparSelecao()">❌ Limpar Seleção</button>
+        </div>
+
+        <div id="loading" class="loader" style="display: none;">
+            <h2>⏳ Carregando lote diário...</h2>
+        </div>
+
+        <div id="leads-container" class="leads-grid"></div>
+
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <h2>📭 Nenhum lead carregado</h2>
+            <p>Clique em "Carregar Lote Diário" para começar</p>
+        </div>
+    </div>
+
+    <script>
+        let loteAtual = [];
+        let selecionados = new Set();
+
+        async function carregarLote() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('leads-container').innerHTML = '';
+            document.getElementById('empty-state').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/reactivation/daily-batch');
+                const data = await response.json();
+
+                loteAtual = data.lote || [];
+                atualizarEstatisticas(data.estatisticas);
+                renderizarLeads(loteAtual);
+
+            } catch (error) {
+                console.error('Erro ao carregar lote:', error);
+                alert('Erro ao carregar lote diário!');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function atualizarEstatisticas(stats) {
+            document.getElementById('stat-total').textContent = stats?.selecionados || 0;
+            document.getElementById('stat-selected').textContent = selecionados.size;
+            document.getElementById('stat-score').textContent = stats?.scoreMedio || 0;
+            document.getElementById('stat-expected').textContent =
+                'R$ ' + (stats?.meta?.receitaEsperada || 0).toLocaleString('pt-BR');
+        }
+
+        function renderizarLeads(leads) {
+            const container = document.getElementById('leads-container');
+
+            if (leads.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            }
+
+            container.innerHTML = leads.map((lead, index) => `
+                <div class="lead-card ${selecionados.has(lead.telefone) ? 'selected' : ''}" id="lead-${index}">
+                    <div class="checkbox-container">
+                        <input type="checkbox"
+                               id="check-${index}"
+                               ${selecionados.has(lead.telefone) ? 'checked' : ''}
+                               onchange="toggleLead('${lead.telefone}', ${index})">
+                        <label for="check-${index}" style="cursor: pointer;">Selecionar para envio</label>
+                    </div>
+
+                    <div class="lead-header">
+                        <div>
+                            <div class="lead-name">${lead.nome}</div>
+                            <div class="lead-phone">${lead.telefone}</div>
+                        </div>
+                        <span class="priority-badge priority-${lead.scoring?.prioridade || 'MEDIA'}">
+                            ${lead.scoring?.prioridade || 'MÉDIA'}
+                        </span>
+                    </div>
+
+                    <div class="score">${lead.scoring?.scoreTotal || 0}/100</div>
+
+                    <span class="template-badge">
+                        📝 ${lead.mensagemData?.template || 'padrão'}
+                    </span>
+
+                    <div class="message-preview">${lead.mensagemData?.mensagem || 'Sem mensagem'}</div>
+
+                    <div style="font-size: 0.85em; color: #6b7280; margin-top: 10px;">
+                        <strong>Plano:</strong> ${lead.planoAnterior || 'N/A'}<br>
+                        <strong>Motivo saída:</strong> ${lead.motivoSaida || 'N/A'}<br>
+                        <strong>Urgência:</strong> ${lead.mensagemData?.urgencia || 'Normal'}
+                    </div>
+
+                    <div class="lead-actions">
+                        <button class="btn btn-success" onclick="aprovarUnico('${lead.telefone}', ${index})">
+                            ✅ Aprovar
+                        </button>
+                        <button class="btn btn-danger" onclick="rejeitarUnico('${lead.telefone}', ${index})">
+                            ❌ Rejeitar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleLead(telefone, index) {
+            if (selecionados.has(telefone)) {
+                selecionados.delete(telefone);
+                document.getElementById(`lead-${index}`).classList.remove('selected');
+            } else {
+                selecionados.add(telefone);
+                document.getElementById(`lead-${index}`).classList.add('selected');
+            }
+
+            document.getElementById('stat-selected').textContent = selecionados.size;
+        }
+
+        function selecionarTodos() {
+            selecionados.clear();
+            loteAtual.forEach(lead => selecionados.add(lead.telefone));
+            renderizarLeads(loteAtual);
+            document.getElementById('stat-selected').textContent = selecionados.size;
+        }
+
+        function limparSelecao() {
+            selecionados.clear();
+            renderizarLeads(loteAtual);
+            document.getElementById('stat-selected').textContent = 0;
+        }
+
+        async function aprovarUnico(telefone, index) {
+            selecionados.add(telefone);
+            await enviarAprovados();
+            loteAtual = loteAtual.filter(l => l.telefone !== telefone);
+            selecionados.delete(telefone);
+            renderizarLeads(loteAtual);
+        }
+
+        async function rejeitarUnico(telefone, index) {
+            if (confirm('Deseja adicionar este lead à blacklist permanente?')) {
+                const motivo = prompt('Motivo (opcional):') || 'Rejeitado manualmente';
+
+                await fetch('/api/reactivation/blacklist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telefone, motivo })
+                });
+            }
+
+            loteAtual = loteAtual.filter(l => l.telefone !== telefone);
+            selecionados.delete(telefone);
+            renderizarLeads(loteAtual);
+        }
+
+        async function aprovarSelecionados() {
+            if (selecionados.size === 0) {
+                alert('Selecione pelo menos um lead!');
+                return;
+            }
+
+            if (!confirm(`Enviar mensagens para ${selecionados.size} leads?`)) {
+                return;
+            }
+
+            await enviarAprovados();
+        }
+
+        async function enviarAprovados() {
+            const leadsAprovados = loteAtual.filter(l => selecionados.has(l.telefone));
+
+            try {
+                const response = await fetch('/api/reactivation/send-approved', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leads: leadsAprovados })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ ${result.enviados} mensagens enviadas com sucesso!`);
+                    loteAtual = loteAtual.filter(l => !selecionados.has(l.telefone));
+                    selecionados.clear();
+                    renderizarLeads(loteAtual);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar:', error);
+                alert('Erro ao enviar mensagens!');
+            }
+        }
+
+        // Carregar automaticamente ao abrir
+        window.onload = () => {
+            carregarLote();
+        };
+
+        // Auto-refresh a cada 5 minutos
+        setInterval(() => {
+            if (loteAtual.length === 0) {
+                carregarLote();
+            }
+        }, 300000);
+    </script>
+</body>
+</html>

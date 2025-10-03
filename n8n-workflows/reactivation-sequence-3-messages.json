@@ -1,0 +1,353 @@
+{
+  "name": "FullForce - Sequência Reativação 3 Mensagens",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "name": "Trigger Diário 9h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.API_URL}}/api/reactivation/recent-churn",
+        "authentication": "genericCredentialType",
+        "options": {}
+      },
+      "name": "Buscar Saídas Recentes",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Processar e pontuar leads\nconst leads = $input.item.json.saidas;\nconst processed = [];\n\nfor (const lead of leads) {\n  // Calcular score\n  let score = 0;\n  \n  if (lead.diasDesde <= 7) score += 40;\n  else if (lead.diasDesde <= 15) score += 30;\n  else if (lead.diasDesde <= 30) score += 20;\n  \n  if (lead.motivoDetalhado.recuperabilidade === 'ALTA') score += 30;\n  else if (lead.motivoDetalhado.recuperabilidade === 'MÉDIA') score += 20;\n  \n  if (lead.planoAnterior?.includes('Clube') || lead.planoAnterior?.includes('Passaporte')) {\n    score += 20;\n  }\n  \n  lead.score = score;\n  lead.prioridade = score >= 70 ? 'ALTA' : score >= 50 ? 'MÉDIA' : 'BAIXA';\n  \n  processed.push(lead);\n}\n\n// Ordenar por score e pegar top 40\nprocessed.sort((a, b) => b.score - a.score);\nconst top40 = processed.slice(0, 40);\n\nreturn top40.map(lead => ({ json: lead }));"
+      },
+      "name": "Processar e Selecionar Top 40",
+      "type": "n8n-nodes-base.code",
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gerar mensagem DIA 1 com gatilhos psicológicos\nconst lead = $input.item.json;\nconst nome = lead.nome.split(' ')[0];\nconst valorOriginal = lead.planoAnterior?.includes('Clube') ? 179 : 149;\nconst vagas = Math.floor(Math.random() * 5) + 3;\nconst pessoas = Math.floor(Math.random() * 15) + 5;\n\nconst mensagem = `Oi ${nome}! 😊\n\nTenho uma OPORTUNIDADE ESPECIAL de retorno pra você:\n\n💰 PLANO ANUAL R$ 119\n   (De R$ ${valorOriginal}/mês = R$ ${valorOriginal * 12}/ano)\n   ECONOMIA: R$ ${((valorOriginal * 12) - 119).toFixed(0)}\n\n✅ ${pessoas} ex-alunos já garantiram a vaga esta semana!\n   Não fique de fora\n\n🎁 BÔNUS ESPECIAL:\n   + 2 meses grátis (R$ ${valorOriginal * 2} de economia)\n   + Avaliação física grátis (R$ 150)\n   Total de bônus: R$ ${(valorOriginal * 2 + 150).toFixed(0)}\n\n⚠️ ATENÇÃO: Só ${vagas} vagas disponíveis!\n\n🎯 Posso garantir sua vaga AGORA?\n\nÉ só responder SIM que eu confirmo!`;\n\nlead.mensagem_dia1 = mensagem;\nlead.data_envio_dia1 = new Date().toISOString();\nlead.etapa = 'DIA_1';\n\nreturn { json: lead };"
+      },
+      "name": "Gerar Mensagem DIA 1",
+      "type": "n8n-nodes-base.code",
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.WAHA_URL}}/api/sendText",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "={{$env.WAHA_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "session",
+              "value": "={{$env.WAHA_SESSION}}"
+            },
+            {
+              "name": "chatId",
+              "value": "={{$json.telefone}}@c.us"
+            },
+            {
+              "name": "text",
+              "value": "={{$json.mensagem_dia1}}"
+            }
+          ]
+        }
+      },
+      "name": "Enviar WhatsApp DIA 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "days"
+      },
+      "name": "Aguardar 2 Dias",
+      "type": "n8n-nodes-base.wait",
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gerar mensagem DIA 2 (Reforço)\nconst lead = $input.item.json;\nconst nome = lead.nome.split(' ')[0];\nconst vagas = Math.floor(Math.random() * 4) + 2;\nconst horas = 48;\n\nconst mensagem = `${nome}, vi que você viu minha mensagem...\n\nSó passando pra reforçar:\n\n⚠️ ATENÇÃO: Só ${vagas} vagas disponíveis!\n   Oferta acaba em ${horas}h\n\n✅ ${Math.floor(Math.random() * 10) + 8} pessoas confirmaram desde ontem!\n\n⚠️ IMPORTANTE:\n   Amanhã volta ao preço normal (R$ ${lead.planoAnterior?.includes('Clube') ? 179 : 149}/mês)\n   Você vai PERDER R$ ${((lead.planoAnterior?.includes('Clube') ? 179 : 149) * 12 - 119).toFixed(0)} de economia!\n\n⏰ Confirma pra mim até hoje?\n\nSó dizer: QUERO!`;\n\nlead.mensagem_dia2 = mensagem;\nlead.data_envio_dia2 = new Date().toISOString();\nlead.etapa = 'DIA_2';\n\nreturn { json: lead };"
+      },
+      "name": "Gerar Mensagem DIA 2",
+      "type": "n8n-nodes-base.code",
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.WAHA_URL}}/api/sendText",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "={{$env.WAHA_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "session",
+              "value": "={{$env.WAHA_SESSION}}"
+            },
+            {
+              "name": "chatId",
+              "value": "={{$json.telefone}}@c.us"
+            },
+            {
+              "name": "text",
+              "value": "={{$json.mensagem_dia2}}"
+            }
+          ]
+        }
+      },
+      "name": "Enviar WhatsApp DIA 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1650, 300]
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "days"
+      },
+      "name": "Aguardar 3 Dias",
+      "type": "n8n-nodes-base.wait",
+      "position": [1850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gerar mensagem DIA 3 (Urgência Final)\nconst lead = $input.item.json;\nconst nome = lead.nome.split(' ')[0];\nconst valorOriginal = lead.planoAnterior?.includes('Clube') ? 179 : 149;\nconst economia = (valorOriginal * 12) - 119;\n\nconst mensagem = `${nome}! ⏰\n\nÚLTIMA CHANCE - essa é a última vez que consigo esta condição:\n\n⚠️ ATENÇÃO: Só 2 vagas restantes!\n   Oferta acaba em 12h\n\n⚠️ IMPORTANTE:\n   Amanhã volta ao preço normal (R$ ${valorOriginal}/mês)\n   Você vai PERDER R$ ${economia.toFixed(0)} de economia!\n\n💰 PLANO ANUAL R$ 119\n   Esta condição não volta mais!\n\n🔥 RESPONDE AGORA - ÚLTIMA CHANCE!\n\nDiga SIM ou perde pra sempre!`;\n\nlead.mensagem_dia3 = mensagem;\nlead.data_envio_dia3 = new Date().toISOString();\nlead.etapa = 'DIA_3';\nlead.sequencia_completa = true;\n\nreturn { json: lead };"
+      },
+      "name": "Gerar Mensagem DIA 3",
+      "type": "n8n-nodes-base.code",
+      "position": [2050, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.WAHA_URL}}/api/sendText",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "={{$env.WAHA_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "session",
+              "value": "={{$env.WAHA_SESSION}}"
+            },
+            {
+              "name": "chatId",
+              "value": "={{$json.telefone}}@c.us"
+            },
+            {
+              "name": "text",
+              "value": "={{$json.mensagem_dia3}}"
+            }
+          ]
+        }
+      },
+      "name": "Enviar WhatsApp DIA 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [2250, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.API_URL}}/api/reactivation/log-sequence",
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "telefone",
+              "value": "={{$json.telefone}}"
+            },
+            {
+              "name": "nome",
+              "value": "={{$json.nome}}"
+            },
+            {
+              "name": "sequencia_completa",
+              "value": true
+            },
+            {
+              "name": "data_dia1",
+              "value": "={{$json.data_envio_dia1}}"
+            },
+            {
+              "name": "data_dia2",
+              "value": "={{$json.data_envio_dia2}}"
+            },
+            {
+              "name": "data_dia3",
+              "value": "={{$json.data_envio_dia3}}"
+            }
+          ]
+        }
+      },
+      "name": "Registrar Sequência",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [2450, 300]
+    }
+  ],
+  "connections": {
+    "Trigger Diário 9h": {
+      "main": [
+        [
+          {
+            "node": "Buscar Saídas Recentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Saídas Recentes": {
+      "main": [
+        [
+          {
+            "node": "Processar e Selecionar Top 40",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processar e Selecionar Top 40": {
+      "main": [
+        [
+          {
+            "node": "Gerar Mensagem DIA 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Mensagem DIA 1": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp DIA 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp DIA 1": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 2 Dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 2 Dias": {
+      "main": [
+        [
+          {
+            "node": "Gerar Mensagem DIA 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Mensagem DIA 2": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp DIA 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp DIA 2": {
+      "main": [
+        [
+          {
+            "node": "Aguardar 3 Dias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aguardar 3 Dias": {
+      "main": [
+        [
+          {
+            "node": "Gerar Mensagem DIA 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Mensagem DIA 3": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp DIA 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp DIA 3": {
+      "main": [
+        [
+          {
+            "node": "Registrar Sequência",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-10T00:00:00.000Z",
+  "versionId": "1"
+}
